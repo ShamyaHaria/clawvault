@@ -1,5 +1,5 @@
 import { getSkill } from '@/lib/api'
-import { Shield, CheckCircle, XCircle, AlertTriangle, ExternalLink, ArrowLeft } from 'lucide-react'
+import { CheckCircle, XCircle, ExternalLink, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 

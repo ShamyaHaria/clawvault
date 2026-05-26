@@ -81,7 +81,7 @@ export default function SubmitPage() {
           <h1 className="text-xl font-bold text-white">Submit a skill for audit</h1>
         </div>
         <p className="text-gray-400 text-sm">
-          Upload your OpenClaw skill as a ZIP file. We'll run it through our 3-layer
+          Upload your OpenClaw skill as a ZIP file. We&apos;ll run it through our 3-layer
           audit pipeline and publish the results publicly.
         </p>
       </div>
