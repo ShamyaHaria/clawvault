@@ -34,4 +34,4 @@ htmlcov/
 *.log
 
 # Temp files from sandbox testing
-/tmp/
+/tmp/.DS_Store

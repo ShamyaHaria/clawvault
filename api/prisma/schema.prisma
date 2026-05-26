@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Skill {
+  id            String        @id @default(uuid())
+  name          String
+  description   String
+  author        String
+  repositoryUrl String
+  submittedAt   DateTime      @default(now())
+  submissions   Submission[]
+  reports       AuditReport[]
+
+  @@map("skills")
+}
+
+model Submission {
+  id            String           @id @default(uuid())
+  skillId       String
+  skill         Skill            @relation(fields: [skillId], references: [id])
+  status        SubmissionStatus @default(PENDING)
+  paymentStatus PaymentStatus    @default(UNPAID)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  report        AuditReport?
+
+  @@map("submissions")
+}
+
+model AuditReport {
+  id           String     @id @default(uuid())
+  submissionId String     @unique
+  submission   Submission @relation(fields: [submissionId], references: [id])
+  skillId      String
+  skill        Skill      @relation(fields: [skillId], references: [id])
+  riskScore    Int
+  riskLevel    String
+  passed       Boolean
+  completedAt  DateTime   @default(now())
+  findings     Finding[]
+
+  @@map("audit_reports")
+}
+
+model Finding {
+  id          String      @id @default(uuid())
+  reportId    String
+  report      AuditReport @relation(fields: [reportId], references: [id])
+  detector    String
+  severity    String
+  ruleId      String
+  description String
+  filePath    String
+  lineNumber  Int
+  match       String
+
+  @@map("findings")
+}
+
+enum SubmissionStatus {
+  PENDING
+  AUDITING
+  COMPLETE
+  REJECTED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+}
