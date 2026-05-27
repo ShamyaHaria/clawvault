@@ -13,17 +13,19 @@ PERMISSION_FLAGS = {
 
 BEHAVIOR_PATTERNS = {
     "network": [
-        re.compile(r"\b(requests|urllib|httpx|aiohttp|fetch|http\.client|socket)\b"),
+        re.compile(r"\b(requests|urllib|httpx|aiohttp|fetch|http\.client|socket|ftplib|smtplib|imaplib|paramiko)\b"),
         re.compile(r"\bopen\s*\(\s*['\"]https?://"),
     ],
     "filesystem": [
         re.compile(r"\bopen\s*\("),
         re.compile(r"\b(os\.remove|os\.unlink|os\.rename|shutil\.(copy|move|rmtree))\b"),
         re.compile(r"\b(Path\s*\(.*\)\s*\.(write|read|unlink|mkdir))\b"),
+        re.compile(r"\btempfile\b"),
     ],
     "subprocess": [
-        re.compile(r"\b(subprocess|os\.system|os\.popen|os\.popen|commands\.getoutput)\b"),
+        re.compile(r"\b(subprocess|os\.system|os\.popen|commands\.getoutput)\b"),
         re.compile(r"\bPopen\s*\("),
+        re.compile(r"\bctypes\b"),
     ],
     "environment": [
         re.compile(r"\bos\.environ\b"),

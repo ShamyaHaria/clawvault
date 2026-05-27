@@ -226,3 +226,98 @@ def test_ini_file_scanned():
     root = _make_skill({"config.ini": '[aws]\naccess_key = AKIAIOSFODNN7EXAMPLE\n'})
     result = run(root)
     assert not result.passed
+
+# ── new credential types ──────────────────────────────────────────────────────
+
+def test_openai_key_detected():
+    root = _make_skill({"config.py": 'OPENAI_KEY = "sk-abcdefghijklmnopqrstuvwxyz123456"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_009" for f in result.findings)
+
+
+def test_anthropic_key_detected():
+    root = _make_skill({"config.py": 'API_KEY = "sk-ant-abcdefghijklmnopqrstuvwxyz12345678"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_010" for f in result.findings)
+
+
+def test_huggingface_token_detected():
+    root = _make_skill({"config.py": 'HF_TOKEN = "hf_abcdefghijklmnopqrstuvwxyz123456"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_011" for f in result.findings)
+
+
+def test_sendgrid_key_detected():
+    root = _make_skill({"config.py": 'SG_KEY = "SG.abcdefghijklmnopqrstuv.abcdefghijklmnopqrstuvwxyz123456789012345678901"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_013" for f in result.findings)
+
+
+def test_credential_in_dict_detected():
+    root = _make_skill({"config.py": 'config = {"api_key": "supersecretkey1234567890"}\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_014" for f in result.findings)
+
+
+def test_credential_in_tsx_file_detected():
+    root = _make_skill({"config.tsx": 'const config = { api_key: "supersecretkey1234567890" }\n'})
+    result = run(root)
+    assert not result.passed
+
+
+def test_base64_encoded_credential_detected():
+    root = _make_skill({"config.py": 'api_key = "c3VwZXJzZWNyZXRrZXkxMjM0NTY3ODkwYWJjZA=="\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_015" for f in result.findings)
+
+def test_jwt_token_detected():
+    root = _make_skill({"config.py": 'TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_016" for f in result.findings)
+
+
+def test_google_oauth_secret_detected():
+    root = _make_skill({"config.py": 'SECRET = "GOCSPX-abcdefghijklmnopqrstuvwxyz12"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_017" for f in result.findings)
+
+
+def test_azure_connection_string_detected():
+    root = _make_skill({"config.py": 'CONN = "DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=mykey123"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_018" for f in result.findings)
+
+
+def test_db_connection_string_with_password_detected():
+    root = _make_skill({"config.py": 'DB = "postgresql://admin:supersecret@localhost:5432/mydb"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_019" for f in result.findings)
+
+
+def test_mysql_connection_string_detected():
+    root = _make_skill({"config.py": 'DB = "mysql://root:password123@localhost/mydb"\n'})
+    result = run(root)
+    assert not result.passed
+
+
+def test_mongodb_connection_string_detected():
+    root = _make_skill({"config.py": 'DB = "mongodb://user:password123@localhost/mydb"\n'})
+    result = run(root)
+    assert not result.passed
+
+
+def test_multiline_string_credential_detected():
+    root = _make_skill({"config.py": 'api_key = """supersecretkey1234567890"""\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "CRED_020" for f in result.findings)

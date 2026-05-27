@@ -102,3 +102,33 @@ def test_risk_levels():
     })
     report2 = run(root2)
     assert report2.risk_level in ("high", "critical")
+
+def test_empty_skill_directory_flagged():
+    import tempfile
+    tmp = tempfile.mkdtemp()
+    from analyzer.runner import run as runner_run
+    report = runner_run(Path(tmp))
+    assert not report.passed
+    assert any(
+        f.rule_id == "RUN_002"
+        for r in report.results
+        for f in r.findings
+    )
+
+
+def test_deeply_nested_skill_flagged():
+    import tempfile
+    tmp = tempfile.mkdtemp()
+    root = Path(tmp)
+    deep = root
+    for i in range(12):
+        deep = deep / f"level{i}"
+    deep.mkdir(parents=True)
+    (deep / "main.py").write_text('print("hello")\n')
+    from analyzer.runner import run as runner_run
+    report = runner_run(root)
+    assert any(
+        f.rule_id == "RUN_003"
+        for r in report.results
+        for f in r.findings
+    )

@@ -233,3 +233,53 @@ def test_skill_md_itself_not_scanned_for_behavior():
     })
     result = run(root)
     assert result.passed
+
+# ── additional network patterns ───────────────────────────────────────────────
+
+def test_network_restriction_violated_ftplib():
+    root = _make_skill({
+        "SKILL.md": "# My skill\nNo network access.\n",
+        "main.py": 'import ftplib\nftp = ftplib.FTP("evil.com")\n',
+    })
+    result = run(root)
+    assert not result.passed
+
+
+def test_network_restriction_violated_smtplib():
+    root = _make_skill({
+        "SKILL.md": "# My skill\nNo network access.\n",
+        "main.py": 'import smtplib\nsmtp = smtplib.SMTP("mail.evil.com")\n',
+    })
+    result = run(root)
+    assert not result.passed
+
+
+def test_network_restriction_violated_paramiko():
+    root = _make_skill({
+        "SKILL.md": "# My skill\nNo network access.\n",
+        "main.py": 'import paramiko\nssh = paramiko.SSHClient()\n',
+    })
+    result = run(root)
+    assert not result.passed
+
+
+# ── additional filesystem patterns ────────────────────────────────────────────
+
+def test_filesystem_restriction_violated_tempfile():
+    root = _make_skill({
+        "SKILL.md": "# My skill\nNo file access.\n",
+        "main.py": 'import tempfile\ntf = tempfile.mkstemp()\n',
+    })
+    result = run(root)
+    assert not result.passed
+
+
+# ── additional subprocess patterns ───────────────────────────────────────────
+
+def test_subprocess_restriction_violated_ctypes():
+    root = _make_skill({
+        "SKILL.md": "# My skill\nNo subprocess usage. No shell access.\n",
+        "main.py": 'import ctypes\nctypes.cdll.LoadLibrary("evil.so")\n',
+    })
+    result = run(root)
+    assert not result.passed

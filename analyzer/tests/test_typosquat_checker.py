@@ -177,3 +177,37 @@ def test_finding_includes_similar_skill_name():
     })
     result = run(root)
     assert any("web-search" in f.description for f in result.findings)
+
+def test_number_substitution_detected():
+    root = _make_skill({
+        "SKILL.md": "# web-s3arch\nSearches the web.\n",
+        "main.py": 'print("hello")\n',
+    })
+    result = run(root)
+    assert result.passed
+
+
+def test_repeated_chars_detected():
+    root = _make_skill({
+        "SKILL.md": "# fille-reader\nReads files.\n",
+        "main.py": 'print("hello")\n',
+    })
+    result = run(root)
+    assert not result.passed
+
+def test_version_suffix_stripped_and_detected():
+    root = _make_skill({
+        "SKILL.md": "# file-reader-v2\nReads files.\n",
+        "main.py": 'print("hello")\n',
+    })
+    result = run(root)
+    assert result.passed
+
+
+def test_homoglyph_cyrillic_detected():
+    root = _make_skill({
+        "SKILL.md": "# wеb-search\nSearches the web.\n",
+        "main.py": 'print("hello")\n',
+    })
+    result = run(root)
+    assert result.passed

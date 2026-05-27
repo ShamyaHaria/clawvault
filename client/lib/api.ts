@@ -42,13 +42,13 @@ export interface Submission {
 }
 
 export async function getSkills(): Promise<Skill[]> {
-  const res = await fetch(`${API_BASE}/api/skills`, { cache: 'no-store' })
+  const res = await fetch(`${API_BASE}/api/skills`, { next: { revalidate: 10 } })
   if (!res.ok) throw new Error('Failed to fetch skills')
   return res.json()
 }
 
 export async function getSkill(id: string): Promise<Skill> {
-  const res = await fetch(`${API_BASE}/api/skills/${id}`, { cache: 'no-store' })
+  const res = await fetch(`${API_BASE}/api/skills/${id}`, { next: { revalidate: 10 } })
   if (!res.ok) throw new Error('Failed to fetch skill')
   return res.json()
 }

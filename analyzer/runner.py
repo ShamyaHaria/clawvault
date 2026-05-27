@@ -1,12 +1,13 @@
 import concurrent.futures
 from pathlib import Path
 from dataclasses import dataclass, field
-from analyzer.models import DetectorResult, Severity
+from analyzer.models import DetectorResult, Finding, Severity
 from analyzer.detectors import (
     credential_detector,
     obfuscation_detector,
     permission_scanner,
     typosquat_checker,
+    dependency_scanner,
 )
 
 DETECTORS = [
@@ -14,6 +15,7 @@ DETECTORS = [
     obfuscation_detector,
     permission_scanner,
     typosquat_checker,
+    dependency_scanner,
 ]
 
 SEVERITY_WEIGHTS = {
@@ -70,8 +72,51 @@ def _build_summary(results: list[DetectorResult]) -> dict:
         }
     return summary
 
+def _pre_flight_checks(skill_root: Path) -> list[Finding]:
+    findings = []
+
+    for file_path in skill_root.rglob("*"):
+        if file_path.is_symlink():
+            findings.append(Finding(
+                detector="runner",
+                severity=Severity.HIGH,
+                rule_id="RUN_001",
+                description="Symlink detected — potential path traversal risk",
+                file_path=str(file_path.relative_to(skill_root)),
+                line_number=0,
+                match=str(file_path.resolve()),
+            ))
+
+    scannable = [f for f in skill_root.rglob("*") if f.is_file() and not f.is_symlink()]
+    if not scannable:
+        findings.append(Finding(
+            detector="runner",
+            severity=Severity.MEDIUM,
+            rule_id="RUN_002",
+            description="Skill directory contains no scannable files",
+            file_path=".",
+            line_number=0,
+            match="empty",
+        ))
+
+    for file_path in skill_root.rglob("*"):
+        depth = len(file_path.relative_to(skill_root).parts)
+        if depth > 10:
+            findings.append(Finding(
+                detector="runner",
+                severity=Severity.LOW,
+                rule_id="RUN_003",
+                description=f"Excessive directory nesting depth ({depth} levels) — potential zip bomb",
+                file_path=str(file_path.relative_to(skill_root)),
+                line_number=0,
+                match=str(depth),
+            ))
+            break
+
+    return findings
 
 def run(skill_root: Path) -> AuditReport:
+    pre_flight = _pre_flight_checks(skill_root)
     results = []
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -81,6 +126,14 @@ def run(skill_root: Path) -> AuditReport:
         }
         for future in concurrent.futures.as_completed(futures):
             results.append(future.result())
+
+    # Inject pre-flight findings as a synthetic detector result
+    if pre_flight:
+        results.append(DetectorResult(
+            detector="runner",
+            passed=False,
+            findings=pre_flight,
+        ))
 
     score = _compute_score(results)
     total_findings = sum(len(r.findings) for r in results)

