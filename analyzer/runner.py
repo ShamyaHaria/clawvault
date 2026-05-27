@@ -8,6 +8,8 @@ from analyzer.detectors import (
     permission_scanner,
     typosquat_checker,
     dependency_scanner,
+    network_destination_analyzer,
+    exfiltration_detector,
 )
 
 DETECTORS = [
@@ -16,6 +18,8 @@ DETECTORS = [
     permission_scanner,
     typosquat_checker,
     dependency_scanner,
+    network_destination_analyzer,
+    exfiltration_detector,
 ]
 
 SEVERITY_WEIGHTS = {
