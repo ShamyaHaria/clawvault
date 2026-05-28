@@ -1,32 +1,35 @@
 import { getSkill } from '@/lib/api'
-import { CheckCircle, XCircle, ExternalLink, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 
 function SeverityBadge({ severity }: { severity: string }) {
-  const styles: Record<string, { color: string; bg: string; border: string }> = {
-    critical: { color: 'var(--accent-red)', bg: 'rgba(248,81,73,0.1)', border: 'rgba(248,81,73,0.3)' },
-    high:     { color: 'var(--accent-orange)', bg: 'rgba(210,153,34,0.1)', border: 'rgba(210,153,34,0.3)' },
-    medium:   { color: '#e3b341', bg: 'rgba(227,179,65,0.1)', border: 'rgba(227,179,65,0.3)' },
-    low:      { color: 'var(--accent-green)', bg: 'rgba(63,185,80,0.1)', border: 'rgba(63,185,80,0.3)' },
+  const map: Record<string, { color: string; bg: string; border: string }> = {
+    critical: { color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)' },
+    high:     { color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)' },
+    medium:   { color: '#eab308', bg: 'rgba(234,179,8,0.08)', border: 'rgba(234,179,8,0.2)' },
+    low:      { color: '#7a8fa8', bg: 'rgba(122,143,168,0.08)', border: 'rgba(122,143,168,0.2)' },
   }
-  const s = styles[severity] ?? styles.low
+  const s = map[severity] ?? map.low
   return (
     <span style={{
-      fontSize: '10px', fontWeight: 700, letterSpacing: '0.06em',
+      fontFamily: 'var(--mono)', fontSize: '10px',
+      fontWeight: 600, letterSpacing: '0.08em',
+      textTransform: 'uppercase',
       color: s.color, background: s.bg,
       border: `1px solid ${s.border}`,
-      padding: '2px 7px', borderRadius: '20px',
-      textTransform: 'uppercase',
+      padding: '2px 7px', borderRadius: '4px',
     }}>{severity}</span>
   )
 }
 
 const DETECTOR_LABELS: Record<string, string> = {
-  credential_detector:  'Credential',
-  obfuscation_detector: 'Obfuscation',
-  permission_scanner:   'Permission',
-  typosquat_checker:    'Typosquat',
+  credential_detector:          'cred',
+  obfuscation_detector:         'obfs',
+  permission_scanner:           'perm',
+  typosquat_checker:            'typo',
+  dependency_scanner:           'deps',
+  network_destination_analyzer: 'net',
+  exfiltration_detector:        'exfil',
 }
 
 export default async function SkillPage({ params }: { params: Promise<{ id: string }> }) {
@@ -38,90 +41,134 @@ export default async function SkillPage({ params }: { params: Promise<{ id: stri
   const findings = report?.findings ?? []
   const critical = findings.filter(f => f.severity === 'critical').length
   const high = findings.filter(f => f.severity === 'high').length
+  const medium = findings.filter(f => f.severity === 'medium').length
 
   return (
-    <div style={{ maxWidth: '760px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+      {/* Back */}
       <Link href="/" style={{
+        fontFamily: 'var(--mono)', fontSize: '12px',
+        color: 'var(--text-muted)', textDecoration: 'none',
         display: 'inline-flex', alignItems: 'center', gap: '6px',
-        fontSize: '13px', color: 'var(--text-secondary)',
-        textDecoration: 'none', marginBottom: '32px',
-      }}>
-        <ArrowLeft size={14} /> Back to directory
-      </Link>
+        marginBottom: '28px',
+      }}>← directory</Link>
 
-      {/* Header card */}
+      {/* Header */}
       <div style={{
         background: 'var(--bg-surface)',
         border: '1px solid var(--border-subtle)',
-        borderRadius: '12px', padding: '28px',
-        marginBottom: '16px',
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '24px',
+        borderRadius: '10px', padding: '24px',
+        marginBottom: '8px',
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'flex-start', gap: '20px',
       }}>
         <div style={{ flex: 1 }}>
-          <h1 style={{
-            fontFamily: 'Syne, sans-serif',
-            fontSize: '24px', fontWeight: 700,
-            color: 'var(--text-primary)', marginBottom: '6px',
-            letterSpacing: '-0.02em',
-          }}>{skill.name}</h1>
-          <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.5 }}>
-            {skill.description}
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '13px', color: 'var(--text-muted)' }}>
-            <span>by {skill.author}</span>
+          <div style={{
+            fontFamily: 'var(--mono)', fontSize: '22px',
+            fontWeight: 600, color: 'var(--text-primary)',
+            letterSpacing: '-0.02em', marginBottom: '8px',
+          }}>{skill.name}</div>
+          <div style={{
+            fontSize: '14px', color: 'var(--text-secondary)',
+            lineHeight: 1.6, marginBottom: '12px',
+          }}>{skill.description}</div>
+          <div style={{
+            display: 'flex', gap: '16px', flexWrap: 'wrap',
+          }}>
+            <span style={{
+              fontFamily: 'var(--mono)', fontSize: '12px',
+              color: 'var(--text-muted)',
+            }}>by {skill.author}</span>
             <a href={skill.repositoryUrl} target="_blank" rel="noopener noreferrer" style={{
-              display: 'inline-flex', alignItems: 'center', gap: '4px',
+              fontFamily: 'var(--mono)', fontSize: '12px',
               color: 'var(--accent-blue)', textDecoration: 'none',
-            }}>
-              Repository <ExternalLink size={12} />
-            </a>
+            }}>repository ↗</a>
           </div>
         </div>
 
         {report && (
           <div style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-            minWidth: '100px', textAlign: 'center',
+            textAlign: 'center', flexShrink: 0,
+            background: report.passed ? 'var(--accent-green-dim)' : 'var(--accent-red-dim)',
+            border: `1px solid ${report.passed ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'}`,
+            borderRadius: '8px', padding: '16px 20px',
+            boxShadow: report.passed
+              ? '0 0 20px rgba(34,197,94,0.08)'
+              : '0 0 20px rgba(239,68,68,0.08)',
           }}>
-            {report.passed
-              ? <CheckCircle size={36} color="var(--accent-green)" />
-              : <XCircle size={36} color="var(--accent-red)" />
-            }
-            <span style={{
-              fontSize: '12px', fontWeight: 600, letterSpacing: '0.04em',
+            <div style={{
+              fontFamily: 'var(--mono)', fontSize: '28px',
+              fontWeight: 600, lineHeight: 1,
               color: report.passed ? 'var(--accent-green)' : 'var(--accent-red)',
+              marginBottom: '4px',
+            }}>{report.passed ? '✓' : '✗'}</div>
+            <div style={{
+              fontFamily: 'var(--mono)', fontSize: '10px',
+              fontWeight: 600, letterSpacing: '0.1em',
+              color: report.passed ? 'var(--accent-green)' : 'var(--accent-red)',
+              textTransform: 'uppercase',
             }}>
-              {report.passed ? 'VERIFIED' : `${report.riskLevel.toUpperCase()} RISK`}
-            </span>
+              {report.passed ? 'verified' : `${report.riskLevel} risk`}
+            </div>
           </div>
         )}
       </div>
 
-      {/* Stats row */}
+      {/* Stats */}
       {report && (
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '16px',
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '6px', marginBottom: '8px',
         }}>
           {[
-            { label: 'Risk Score', value: report.riskScore, highlight: !report.passed },
-            { label: 'Risk Level', value: report.riskLevel.toUpperCase(), highlight: false },
-            { label: 'Findings', value: findings.length, highlight: findings.length > 0 },
-            { label: 'Critical', value: critical, highlight: critical > 0 },
-          ].map(({ label, value, highlight }) => (
+            { label: 'risk score', value: report.riskScore, alert: !report.passed },
+            { label: 'risk level', value: report.riskLevel.toUpperCase(), alert: !report.passed },
+            { label: 'findings', value: findings.length, alert: findings.length > 0 },
+            { label: 'critical', value: critical, alert: critical > 0 },
+          ].map(({ label, value, alert }) => (
             <div key={label} style={{
               background: 'var(--bg-surface)',
-              border: `1px solid ${highlight ? 'rgba(248,81,73,0.25)' : 'var(--border-subtle)'}`,
-              borderRadius: '10px', padding: '16px', textAlign: 'center',
+              border: `1px solid ${alert && Number(value) > 0 ? 'rgba(239,68,68,0.2)' : 'var(--border-subtle)'}`,
+              borderRadius: '8px', padding: '14px',
+              textAlign: 'center',
             }}>
               <div style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '22px', fontWeight: 700,
-                color: highlight ? 'var(--accent-red)' : 'var(--text-primary)',
+                fontFamily: 'var(--mono)', fontSize: '11px',
+                color: 'var(--text-muted)', letterSpacing: '0.06em',
+                textTransform: 'uppercase', marginBottom: '6px',
+              }}>{label}</div>
+              <div style={{
+                fontFamily: 'var(--mono)', fontSize: '20px',
+                fontWeight: 600,
+                color: alert && Number(value) > 0
+                  ? 'var(--accent-red)'
+                  : 'var(--text-primary)',
               }}>{value}</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', letterSpacing: '0.04em' }}>
-                {label}
-              </div>
             </div>
+          ))}
+        </div>
+      )}
+
+      {/* Severity breakdown */}
+      {findings.length > 0 && (
+        <div style={{
+          display: 'flex', gap: '6px', marginBottom: '20px', flexWrap: 'wrap',
+        }}>
+          {[
+            { label: 'critical', count: critical, color: '#ef4444' },
+            { label: 'high', count: high, color: '#f59e0b' },
+            { label: 'medium', count: medium, color: '#eab308' },
+            { label: 'low', count: findings.length - critical - high - medium, color: '#7a8fa8' },
+          ].filter(s => s.count > 0).map(({ label, count, color }) => (
+            <span key={label} style={{
+              fontFamily: 'var(--mono)', fontSize: '11px',
+              color, padding: '4px 10px',
+              background: `${color}10`,
+              border: `1px solid ${color}30`,
+              borderRadius: '4px',
+            }}>
+              {count} {label}
+            </span>
           ))}
         </div>
       )}
@@ -130,70 +177,72 @@ export default async function SkillPage({ params }: { params: Promise<{ id: stri
       {findings.length === 0 ? (
         <div style={{
           textAlign: 'center', padding: '48px',
-          border: '1px dashed var(--border-subtle)', borderRadius: '12px',
+          border: '1px dashed rgba(34,197,94,0.2)',
+          borderRadius: '10px',
+          background: 'rgba(34,197,94,0.02)',
         }}>
-          <CheckCircle size={28} color="var(--accent-green)" style={{ margin: '0 auto 12px' }} />
-          <p style={{ color: 'var(--text-primary)', fontWeight: 500, fontSize: '14px' }}>No findings detected</p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>This skill passed all audit layers</p>
+          <div style={{
+            fontFamily: 'var(--mono)', fontSize: '24px',
+            color: 'var(--accent-green)', marginBottom: '8px',
+          }}>✓</div>
+          <div style={{
+            fontFamily: 'var(--mono)', fontSize: '13px',
+            color: 'var(--accent-green)', marginBottom: '4px',
+          }}>no findings detected</div>
+          <div style={{
+            fontSize: '12px', color: 'var(--text-muted)',
+          }}>This skill passed all 7 audit layers</div>
         </div>
       ) : (
-        <div>
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            marginBottom: '12px',
-          }}>
-            <h2 style={{
-              fontFamily: 'Syne, sans-serif', fontSize: '13px', fontWeight: 600,
-              color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase',
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {findings.map((finding) => (
+            <div key={finding.id} style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '8px', padding: '14px 16px',
             }}>
-              Findings
-            </h2>
-            <div style={{ display: 'flex', gap: '8px', fontSize: '12px' }}>
-              {critical > 0 && <span style={{ color: 'var(--accent-red)' }}>{critical} critical</span>}
-              {high > 0 && <span style={{ color: 'var(--accent-orange)' }}>{high} high</span>}
-            </div>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {findings.map((finding) => (
-              <div key={finding.id} style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '10px', padding: '16px',
+              <div style={{
+                display: 'flex', alignItems: 'center',
+                gap: '8px', marginBottom: '8px', flexWrap: 'wrap',
               }}>
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap',
+                <SeverityBadge severity={finding.severity} />
+                <span style={{
+                  fontFamily: 'var(--mono)', fontSize: '10px',
+                  color: 'var(--accent-blue)',
+                  background: 'var(--accent-blue-dim)',
+                  border: '1px solid rgba(59,130,246,0.2)',
+                  padding: '2px 7px', borderRadius: '4px',
                 }}>
-                  <SeverityBadge severity={finding.severity} />
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                    {DETECTOR_LABELS[finding.detector] ?? finding.detector}
-                  </span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-                    {finding.ruleId}
-                  </span>
-                </div>
-                <p style={{ fontSize: '13px', color: 'var(--text-primary)', marginBottom: '8px' }}>
-                  {finding.description}
-                </p>
-                <div style={{
-                  fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace',
-                  marginBottom: finding.match ? '8px' : 0,
-                }}>
-                  {finding.filePath} · line {finding.lineNumber}
-                </div>
-                {finding.match && (
-                  <div style={{
-                    background: 'var(--bg-base)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '6px', padding: '8px 12px',
-                    fontSize: '12px', fontFamily: 'monospace',
-                    color: 'var(--text-secondary)',
-                  }}>
-                    {finding.match}
-                  </div>
-                )}
+                  {DETECTOR_LABELS[finding.detector] ?? finding.detector}
+                </span>
+                <span style={{
+                  fontFamily: 'var(--mono)', fontSize: '10px',
+                  color: 'var(--text-muted)',
+                }}>{finding.ruleId}</span>
               </div>
-            ))}
-          </div>
+              <div style={{
+                fontSize: '13px', color: 'var(--text-primary)',
+                marginBottom: '8px', lineHeight: 1.5,
+              }}>{finding.description}</div>
+              <div style={{
+                fontFamily: 'var(--mono)', fontSize: '11px',
+                color: 'var(--text-muted)',
+                marginBottom: finding.match ? '8px' : 0,
+              }}>
+                {finding.filePath} · line {finding.lineNumber}
+              </div>
+              {finding.match && (
+                <div style={{
+                  background: 'var(--bg-base)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '5px', padding: '8px 12px',
+                  fontFamily: 'var(--mono)', fontSize: '12px',
+                  color: 'var(--text-secondary)',
+                  overflowX: 'auto',
+                }}>{finding.match}</div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

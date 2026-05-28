@@ -7,6 +7,6 @@ export default defineConfig({
     path: 'prisma/migrations',
   },
   datasource: {
-    url: process.env.DATABASE_URL ?? 'postgresql://postgres@localhost:5432/clawvault',
+    url: process.env.DATABASE_URL ?? 'postgresql://shamya@localhost:5432/clawvault',
   },
 })

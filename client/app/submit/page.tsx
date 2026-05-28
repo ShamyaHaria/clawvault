@@ -1,22 +1,32 @@
 'use client'
 
 import { useState } from 'react'
-import { Shield, Upload, CheckCircle, AlertCircle, Loader2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
-const inputStyle = {
+const inputStyle: React.CSSProperties = {
   width: '100%',
   background: 'var(--bg-surface)',
   border: '1px solid var(--border-default)',
-  borderRadius: '8px',
+  borderRadius: '7px',
   padding: '10px 14px',
-  fontSize: '13px',
+  fontSize: '14px',
   color: 'var(--text-primary)',
   outline: 'none',
-  fontFamily: 'DM Sans, sans-serif',
+  fontFamily: 'var(--sans)',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontFamily: 'var(--mono)',
+  fontSize: '11px',
+  fontWeight: 500,
+  color: 'var(--text-muted)',
+  marginBottom: '7px',
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
 }
 
 export default function SubmitPage() {
@@ -48,37 +58,61 @@ export default function SubmitPage() {
 
   if (status === 'success') {
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', textAlign: 'center', paddingTop: '64px' }}>
-        <CheckCircle size={40} color="var(--accent-green)" style={{ margin: '0 auto 16px' }} />
-        <h1 style={{
-          fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700,
-          color: 'var(--text-primary)', marginBottom: '8px',
-        }}>Submission received</h1>
-        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.6 }}>
-          Your skill is being audited across all 4 layers. This usually takes under a minute.
-        </p>
+      <div style={{ maxWidth: '480px', margin: '0 auto', paddingTop: '40px' }}>
         <div style={{
-          background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)',
-          borderRadius: '10px', padding: '16px', marginBottom: '24px', textAlign: 'left',
+          background: 'var(--bg-surface)',
+          border: '1px solid rgba(34,197,94,0.2)',
+          borderRadius: '10px', padding: '32px',
+          textAlign: 'center',
+          boxShadow: '0 0 30px rgba(34,197,94,0.05)',
         }}>
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', letterSpacing: '0.04em' }}>
-            SUBMISSION ID
-          </p>
-          <p style={{ fontFamily: 'monospace', fontSize: '13px', color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
-            {submissionId}
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-          <Link href="/" style={{
-            border: '1px solid var(--border-default)', color: 'var(--text-secondary)',
-            padding: '9px 18px', borderRadius: '8px', fontSize: '13px',
-            fontWeight: 500, textDecoration: 'none',
-          }}>Back to directory</Link>
-          <button onClick={() => { setStatus('idle'); setFile(null) }} style={{
-            background: 'var(--accent-blue)', color: '#fff',
-            padding: '9px 18px', borderRadius: '8px', fontSize: '13px',
-            fontWeight: 500, border: 'none', cursor: 'pointer',
-          }}>Submit another</button>
+          <div style={{
+            fontFamily: 'var(--mono)', fontSize: '32px',
+            color: 'var(--accent-green)', marginBottom: '12px',
+          }}>✓</div>
+          <div style={{
+            fontFamily: 'var(--mono)', fontSize: '16px',
+            fontWeight: 600, color: 'var(--text-primary)',
+            marginBottom: '8px',
+          }}>submission received</div>
+          <div style={{
+            fontSize: '13px', color: 'var(--text-secondary)',
+            marginBottom: '24px', lineHeight: 1.6,
+          }}>
+            Auditing across all 7 layers. Results publish in seconds.
+          </div>
+          <div style={{
+            background: 'var(--bg-base)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: '7px', padding: '12px 16px',
+            marginBottom: '24px', textAlign: 'left',
+          }}>
+            <div style={{
+              fontFamily: 'var(--mono)', fontSize: '10px',
+              color: 'var(--text-muted)', letterSpacing: '0.08em',
+              textTransform: 'uppercase', marginBottom: '6px',
+            }}>submission_id</div>
+            <div style={{
+              fontFamily: 'var(--mono)', fontSize: '12px',
+              color: 'var(--text-secondary)', wordBreak: 'break-all',
+            }}>{submissionId}</div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            <Link href="/" style={{
+              border: '1px solid var(--border-default)',
+              color: 'var(--text-secondary)',
+              padding: '8px 18px', borderRadius: '7px',
+              fontSize: '13px', fontWeight: 500,
+              textDecoration: 'none', fontFamily: 'var(--mono)',
+            }}>← directory</Link>
+            <button onClick={() => { setStatus('idle'); setFile(null) }} style={{
+              background: 'var(--accent-blue)', color: '#fff',
+              padding: '8px 18px', borderRadius: '7px',
+              fontSize: '13px', fontWeight: 600,
+              border: 'none', cursor: 'pointer',
+              fontFamily: 'var(--mono)',
+            }}>submit another</button>
+          </div>
         </div>
       </div>
     )
@@ -87,108 +121,141 @@ export default function SubmitPage() {
   return (
     <div style={{ maxWidth: '520px', margin: '0 auto' }}>
       <Link href="/" style={{
-        display: 'inline-flex', alignItems: 'center', gap: '6px',
-        fontSize: '13px', color: 'var(--text-secondary)',
-        textDecoration: 'none', marginBottom: '32px',
-      }}>
-        <ArrowLeft size={14} /> Back
-      </Link>
+        fontFamily: 'var(--mono)', fontSize: '12px',
+        color: 'var(--text-muted)', textDecoration: 'none',
+        display: 'inline-block', marginBottom: '28px',
+      }}>← directory</Link>
 
       <div style={{ marginBottom: '28px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <Shield size={16} color="var(--accent-blue)" />
-          <h1 style={{
-            fontFamily: 'Syne, sans-serif', fontSize: '20px',
-            fontWeight: 700, color: 'var(--text-primary)',
-          }}>Submit a skill for audit</h1>
+        <div style={{
+          fontFamily: 'var(--mono)', fontSize: '11px',
+          color: 'var(--text-muted)', letterSpacing: '0.1em',
+          textTransform: 'uppercase', marginBottom: '8px',
+        }}>Submit for audit</div>
+        <div style={{
+          fontFamily: 'var(--mono)', fontSize: '20px',
+          fontWeight: 600, color: 'var(--text-primary)',
+          marginBottom: '8px',
+        }}>Get your skill verified</div>
+        <div style={{
+          fontSize: '14px', color: 'var(--text-secondary)',
+          lineHeight: 1.6, fontWeight: 300,
+        }}>
+          Upload your OpenClaw skill as a ZIP. We&apos;ll run it through 7 audit
+          layers and publish the results publicly within seconds.
         </div>
-        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-          Upload your OpenClaw skill as a ZIP file. We&apos;ll run it through our 4-layer
-          audit pipeline and publish the results publicly.
-        </p>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {[
-            { name: 'name', label: 'Skill name', placeholder: 'e.g. file-reader', type: 'text' },
-            { name: 'author', label: 'Author', placeholder: 'Your name or organization', type: 'text' },
-            { name: 'repositoryUrl', label: 'Repository URL', placeholder: 'https://github.com/you/your-skill', type: 'url' },
+            { name: 'name', label: 'skill_name', placeholder: 'e.g. weather-fetcher', type: 'text' },
+            { name: 'author', label: 'author', placeholder: 'your name or org', type: 'text' },
+            { name: 'repositoryUrl', label: 'repository_url', placeholder: 'https://github.com/you/skill', type: 'url' },
           ].map(({ name, label, placeholder, type }) => (
             <div key={name}>
-              <label style={{
-                display: 'block', fontSize: '12px', fontWeight: 500,
-                color: 'var(--text-secondary)', marginBottom: '6px', letterSpacing: '0.02em',
-              }}>{label}</label>
-              <input name={name} required type={type} placeholder={placeholder} style={inputStyle} />
+              <label style={labelStyle}>{label}</label>
+              <input
+                name={name} required type={type}
+                placeholder={placeholder}
+                style={inputStyle}
+              />
             </div>
           ))}
 
           <div>
-            <label style={{
-              display: 'block', fontSize: '12px', fontWeight: 500,
-              color: 'var(--text-secondary)', marginBottom: '6px',
-            }}>Description</label>
-            <textarea name="description" required rows={3} placeholder="What does this skill do?" style={{
-              ...inputStyle, resize: 'none', lineHeight: 1.5,
-            }} />
+            <label style={labelStyle}>description</label>
+            <textarea
+              name="description" required rows={3}
+              placeholder="what does this skill do?"
+              style={{ ...inputStyle, resize: 'none', lineHeight: 1.6 }}
+            />
           </div>
 
           <div>
+            <label style={labelStyle}>skill_zip</label>
             <label style={{
-              display: 'block', fontSize: '12px', fontWeight: 500,
-              color: 'var(--text-secondary)', marginBottom: '6px',
-            }}>Skill ZIP file</label>
-            <label style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center',
-              justifyContent: 'center', width: '100%',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              width: '100%', padding: '28px 20px',
               border: `1px dashed ${file ? 'var(--accent-blue)' : 'var(--border-default)'}`,
-              borderRadius: '10px', padding: '32px 20px', cursor: 'pointer',
-              background: file ? 'rgba(47,129,247,0.04)' : 'var(--bg-surface)',
+              borderRadius: '8px', cursor: 'pointer',
+              background: file ? 'var(--accent-blue-dim)' : 'var(--bg-surface)',
               transition: 'all 0.15s',
             }}>
-              <Upload size={20} color={file ? 'var(--accent-blue)' : 'var(--text-muted)'} style={{ marginBottom: '8px' }} />
-              {file
-                ? <span style={{ fontSize: '13px', color: 'var(--accent-blue)', fontWeight: 500 }}>{file.name}</span>
-                : <>
-                    <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Click to upload ZIP</span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>Max 50MB</span>
-                  </>
-              }
-              <input type="file" accept=".zip" style={{ display: 'none' }}
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+              {file ? (
+                <div style={{
+                  fontFamily: 'var(--mono)', fontSize: '13px',
+                  color: 'var(--accent-blue)',
+                }}>{file.name}</div>
+              ) : (
+                <>
+                  <div style={{
+                    fontFamily: 'var(--mono)', fontSize: '20px',
+                    color: 'var(--text-muted)', marginBottom: '6px',
+                  }}>↑</div>
+                  <div style={{
+                    fontFamily: 'var(--mono)', fontSize: '12px',
+                    color: 'var(--text-secondary)',
+                  }}>click to upload .zip</div>
+                  <div style={{
+                    fontFamily: 'var(--mono)', fontSize: '11px',
+                    color: 'var(--text-muted)', marginTop: '4px',
+                  }}>max 50mb</div>
+                </>
+              )}
+              <input
+                type="file" accept=".zip"
+                style={{ display: 'none' }}
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              />
             </label>
           </div>
 
           {status === 'error' && (
             <div style={{
               display: 'flex', alignItems: 'center', gap: '8px',
-              color: 'var(--accent-red)', background: 'rgba(248,81,73,0.08)',
-              border: '1px solid rgba(248,81,73,0.25)',
-              borderRadius: '8px', padding: '12px 14px', fontSize: '13px',
+              color: 'var(--accent-red)',
+              background: 'var(--accent-red-dim)',
+              border: '1px solid rgba(239,68,68,0.2)',
+              borderRadius: '7px', padding: '10px 14px',
+              fontFamily: 'var(--mono)', fontSize: '12px',
             }}>
-              <AlertCircle size={15} style={{ flexShrink: 0 }} />
-              {error}
+              ✗ {error}
             </div>
           )}
 
-          <button type="submit" disabled={status === 'submitting' || !file} style={{
-            width: '100%', background: 'var(--accent-blue)', color: '#fff',
-            padding: '11px', borderRadius: '8px', fontSize: '13px',
-            fontWeight: 600, border: 'none', cursor: 'pointer',
-            opacity: status === 'submitting' || !file ? 0.5 : 1,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-            fontFamily: 'Syne, sans-serif', letterSpacing: '0.02em',
-          }}>
-            {status === 'submitting'
-              ? <><Loader2 size={15} /> Submitting...</>
-              : 'Submit for Audit'
-            }
+          <button
+            type="submit"
+            disabled={status === 'submitting' || !file}
+            style={{
+              width: '100%',
+              background: status === 'submitting' || !file
+                ? 'var(--bg-elevated)'
+                : 'var(--accent-blue)',
+              color: status === 'submitting' || !file
+                ? 'var(--text-muted)'
+                : '#fff',
+              padding: '12px',
+              borderRadius: '7px',
+              fontSize: '14px', fontWeight: 600,
+              border: `1px solid ${status === 'submitting' || !file ? 'var(--border-default)' : 'transparent'}`,
+              cursor: status === 'submitting' || !file ? 'not-allowed' : 'pointer',
+              fontFamily: 'var(--mono)',
+              letterSpacing: '0.04em',
+              transition: 'all 0.15s',
+            }}
+          >
+            {status === 'submitting' ? 'auditing...' : 'submit_for_audit()'}
           </button>
 
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
-            By submitting you agree that your skill will be publicly audited and the results published on ClawVault.
-          </p>
+          <div style={{
+            fontFamily: 'var(--mono)', fontSize: '11px',
+            color: 'var(--text-muted)', textAlign: 'center',
+            lineHeight: 1.6,
+          }}>
+            // results published publicly. all findings disclosed.
+          </div>
         </div>
       </form>
     </div>

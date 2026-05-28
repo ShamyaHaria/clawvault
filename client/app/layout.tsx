@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Link from 'next/link'
-import { Shield } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'ClawVault — Trusted Skill Registry for OpenClaw',
@@ -14,7 +13,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <nav style={{
           borderBottom: '1px solid var(--border-subtle)',
-          backgroundColor: 'var(--bg-base)',
+          backgroundColor: 'rgba(8,12,16,0.92)',
+          backdropFilter: 'blur(12px)',
           position: 'sticky',
           top: 0,
           zIndex: 50,
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             maxWidth: '1100px',
             margin: '0 auto',
             padding: '0 24px',
-            height: '56px',
+            height: '52px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -31,43 +31,66 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/" style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              fontFamily: 'Syne, sans-serif',
-              fontWeight: 700,
-              fontSize: '16px',
-              color: 'var(--text-primary)',
+              gap: '10px',
               textDecoration: 'none',
-              letterSpacing: '-0.02em',
             }}>
-              <Shield size={18} color="var(--accent-blue)" />
-              ClawVault
+              <div style={{
+                width: '28px',
+                height: '28px',
+                background: 'linear-gradient(135deg, #1e3a5f, #3b82f6)',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontFamily: 'var(--mono)',
+                fontWeight: 600,
+                color: '#fff',
+                boxShadow: '0 0 12px rgba(59,130,246,0.3)',
+              }}>CV</div>
+              <span style={{
+                fontFamily: 'var(--mono)',
+                fontWeight: 600,
+                fontSize: '15px',
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.02em',
+              }}>ClawVault</span>
             </Link>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Link href="/" style={{
                 fontSize: '13px',
                 color: 'var(--text-secondary)',
                 textDecoration: 'none',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontWeight: 500,
               }}>Directory</Link>
               <Link href="/submit" style={{
                 fontSize: '13px',
                 color: 'var(--text-secondary)',
                 textDecoration: 'none',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontWeight: 500,
               }}>Submit</Link>
               <Link href="/submit" style={{
                 fontSize: '13px',
-                fontWeight: 500,
+                fontWeight: 600,
                 color: '#fff',
                 backgroundColor: 'var(--accent-blue)',
-                padding: '6px 14px',
+                padding: '6px 16px',
                 borderRadius: '6px',
                 textDecoration: 'none',
+                letterSpacing: '0.01em',
+                boxShadow: '0 0 16px rgba(59,130,246,0.25)',
               }}>
                 Get Verified
               </Link>
             </div>
           </div>
         </nav>
-        <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 24px' }}>
+        <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px' }}>
           {children}
         </main>
       </body>

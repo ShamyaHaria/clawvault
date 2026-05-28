@@ -1,43 +1,54 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg-base: #0d1117;
-  --bg-surface: #161b22;
-  --bg-elevated: #1c2128;
-  --border-subtle: #21262d;
-  --border-default: #30363d;
-  --border-emphasis: #484f58;
-  --text-primary: #e6edf3;
-  --text-secondary: #8b949e;
-  --text-muted: #484f58;
-  --accent-blue: #2f81f7;
-  --accent-blue-subtle: #1f4a8a;
-  --accent-green: #3fb950;
-  --accent-red: #f85149;
-  --accent-orange: #d29922;
+  --bg-base:         #080c10;
+  --bg-surface:      #0d1117;
+  --bg-elevated:     #13191f;
+  --bg-hover:        #171e26;
+  --border-subtle:   #1c2430;
+  --border-default:  #243040;
+  --border-emphasis: #2d3d52;
+  --text-primary:    #e2eaf4;
+  --text-secondary:  #7a8fa8;
+  --text-muted:      #3d5068;
+  --accent-blue:     #3b82f6;
+  --accent-blue-dim: #1e3a5f;
+  --accent-green:    #22c55e;
+  --accent-green-dim:#0f2d1a;
+  --accent-red:      #ef4444;
+  --accent-red-dim:  #2d1010;
+  --accent-orange:   #f59e0b;
+  --accent-yellow:   #eab308;
+  --mono:            'IBM Plex Mono', monospace;
+  --sans:            'Outfit', sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+* { box-sizing: border-box; padding: 0; margin: 0; }
 
-html {
-  color-scheme: dark;
-}
+html { color-scheme: dark; }
 
 body {
   background: var(--bg-base);
   color: var(--text-primary);
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,0.015) 1px, transparent 1px);
+  background-size: 32px 32px;
+  min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Syne', sans-serif;
+::selection {
+  background: rgba(59,130,246,0.3);
+  color: var(--text-primary);
 }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 3px; }
