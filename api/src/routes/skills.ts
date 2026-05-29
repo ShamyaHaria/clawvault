@@ -59,7 +59,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 router.get('/:id/badge', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
 
     const skill = await prisma.skill.findUnique({
       where: { id },
