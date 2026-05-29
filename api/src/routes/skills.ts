@@ -23,7 +23,7 @@ router.get('/', async (_req: Request, res: Response) => {
 
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
 
     if (!id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
       res.status(400).json({ error: 'Invalid skill ID format' })
@@ -76,8 +76,9 @@ router.get('/:id/badge', async (req: Request, res: Response) => {
       return
     }
 
-    const passed = skill.reports[0]?.passed ?? false
-    const riskLevel = skill.reports[0]?.riskLevel ?? 'unknown'
+    const skillWithReports = skill as any
+    const passed = skillWithReports.reports[0]?.passed ?? false
+    const riskLevel = skillWithReports.reports[0]?.riskLevel ?? 'unknown'
 
     const color = passed ? '#22c55e' : '#ef4444'
     const label = passed ? 'verified' : riskLevel

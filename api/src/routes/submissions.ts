@@ -97,7 +97,7 @@ router.post('/', upload.single('skill'), async (req: Request, res: Response) => 
 
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
 
     if (!id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
       res.status(400).json({ error: 'Invalid submission ID format' })
