@@ -6,7 +6,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL ?? 'postgresql://postgres@localhost:5432/clawvault',
+  connectionString: process.env.DATABASE_URL ?? 'postgresql://shamya@localhost:5432/clawvault',
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 })
 
 const adapter = new PrismaPg(pool)
