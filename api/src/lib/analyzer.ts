@@ -30,16 +30,17 @@ export interface Finding {
 export function runAnalyzer(skillPath: string): Promise<AnalyzerResult> {
   return new Promise((resolve, reject) => {
     const scriptPath = path.resolve(__dirname, '../../../analyzer/run.py')
+    const pythonBin = process.env.PYTHON_BIN ?? 'python3'
 
-    const process = spawn('python3.11', [scriptPath, skillPath])
+    const proc = spawn(pythonBin, [scriptPath, skillPath])
 
     let stdout = ''
     let stderr = ''
 
-    process.stdout.on('data', (data) => { stdout += data.toString() })
-    process.stderr.on('data', (data) => { stderr += data.toString() })
+    proc.stdout.on('data', (data) => { stdout += data.toString() })
+    proc.stderr.on('data', (data) => { stderr += data.toString() })
 
-    process.on('close', (code) => {
+    proc.on('close', (code) => {
       if (code !== 0) {
         reject(new Error(`Analyzer exited with code ${code}: ${stderr}`))
         return
