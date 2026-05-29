@@ -4,11 +4,26 @@ from analyzer.models import Finding, DetectorResult, Severity
 
 
 KNOWN_SKILLS = [
-    "file-reader", "web-search", "code-runner", "image-analyzer",
-    "pdf-parser", "data-visualizer", "markdown-renderer", "csv-processor",
-    "json-formatter", "git-helper", "docker-manager", "sql-query",
-    "api-tester", "text-summarizer", "language-translator", "math-solver",
-    "calendar-manager", "email-composer", "slack-notifier", "github-browser",
+    # productivity
+    "gmail", "slack", "notion", "calendar", "email-manager",
+    "ms-todo", "postfast", "publora", "clipboard", "personal-plans",
+    # development
+    "github", "git-helper", "code-reviewer", "test-generator",
+    "neo-github-readme-generator", "claude-usage", "cli-worker",
+    # data and documents
+    "pdf-parser", "md2pdf-converter", "ai-pdf-builder", "csv-processor",
+    "json-formatter", "beautiful-mermaid", "ppt-ooxml-tool",
+    # devops and cloud
+    "docker-manager", "elasticsearch-skill", "email-processor",
+    "encrypted-docs", "expanso-pii-redact", "expanso-text-summarize",
+    # ai and agents
+    "human-like-memory", "hivemind", "hyperstack", "agent-soul-crafter",
+    "deepclaw", "openclaws",
+    # utilities
+    "web-search", "image-analyzer", "language-translator", "math-solver",
+    "weather-fetcher", "apikiss", "fd-find", "clipboard",
+    # security
+    "agent-skills-tools",
 ]
 
 TYPOSQUAT_THRESHOLD = 2

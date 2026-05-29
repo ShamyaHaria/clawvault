@@ -58,18 +58,27 @@ def test_clean_unique_skill_passes():
 
 def test_exact_known_name_passes():
     root = _make_skill({
-        "SKILL.md": "# file-reader\nReads files from disk.\n",
+        "SKILL.md": "# slack\nA Slack integration skill.\n",
         "main.py": 'print("hello")\n',
     })
     result = run(root)
     assert result.passed
+
+def test_typosquat_close_name_detected():
+    root = _make_skill({
+        "SKILL.md": "# web-searh\nSearches the web.\n",
+        "main.py": 'print("hello")\n',
+    })
+    result = run(root)
+    assert not result.passed
+    assert any("web-search" in f.description for f in result.findings)
 
 
 # ── typosquatting detected ────────────────────────────────────────────────────
 
 def test_single_char_insert_detected():
     root = _make_skill({
-        "SKILL.md": "# fille-reader\nReads files.\n",
+        "SKILL.md": "# slacck\nA Slack integration skill.\n",
         "main.py": 'print("hello")\n',
     })
     result = run(root)
@@ -79,7 +88,7 @@ def test_single_char_insert_detected():
 
 def test_single_char_delete_detected():
     root = _make_skill({
-        "SKILL.md": "# fil-reader\nReads files.\n",
+        "SKILL.md": "# gmai\nA Gmail integration skill.\n",
         "main.py": 'print("hello")\n',
     })
     result = run(root)
@@ -88,7 +97,7 @@ def test_single_char_delete_detected():
 
 def test_single_char_substitution_detected():
     root = _make_skill({
-        "SKILL.md": "# file-reeder\nReads files.\n",
+        "SKILL.md": "# notian\nA Notion integration skill.\n",
         "main.py": 'print("hello")\n',
     })
     result = run(root)
@@ -97,7 +106,7 @@ def test_single_char_substitution_detected():
 
 def test_missing_hyphen_detected():
     root = _make_skill({
-        "SKILL.md": "# filereader\nReads files.\n",
+        "SKILL.md": "# githelper\nA git helper skill.\n",
         "main.py": 'print("hello")\n',
     })
     result = run(root)
@@ -116,12 +125,11 @@ def test_web_search_typo_detected():
 
 def test_hyphen_to_underscore_detected():
     root = _make_skill({
-        "SKILL.md": "# file_reader\nReads files.\n",
+        "SKILL.md": "# git_helper\nA git helper skill.\n",
         "main.py": 'print("hello")\n',
     })
     result = run(root)
     assert not result.passed
-
 
 # ── edge cases that should NOT flag ──────────────────────────────────────────
 
@@ -186,10 +194,9 @@ def test_number_substitution_detected():
     result = run(root)
     assert result.passed
 
-
 def test_repeated_chars_detected():
     root = _make_skill({
-        "SKILL.md": "# fille-reader\nReads files.\n",
+        "SKILL.md": "# slackk\nA Slack integration.\n",
         "main.py": 'print("hello")\n',
     })
     result = run(root)
@@ -211,3 +218,12 @@ def test_homoglyph_cyrillic_detected():
     })
     result = run(root)
     assert result.passed
+
+def test_typosquat_violation_fails():
+    root = _make_skill({
+        "SKILL.md": "# slacck\nA Slack integration.\n",
+        "main.py": 'print("hello")\n',
+    })
+    result = run(root)
+    assert not result.passed
+    assert len(result.findings) > 0

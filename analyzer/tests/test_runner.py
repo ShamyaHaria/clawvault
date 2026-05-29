@@ -58,7 +58,7 @@ def test_permission_violation_fails():
 
 def test_typosquat_violation_fails():
     root = _make_skill({
-        "SKILL.md": "# fille-reader\nReads files.\n",
+        "SKILL.md": "# slacck\nA Slack integration.\n",
         "main.py": "result = 1 + 1\n",
     })
     report = run(root)

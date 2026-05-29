@@ -87,7 +87,7 @@ export default async function HomePage() {
           maxWidth: '560px', lineHeight: 1.7,
           marginBottom: '36px', fontWeight: 300,
         }}>
-          ClawVault audits every OpenClaw skill through a 7-layer static analysis
+          ClawVault audits every OpenClaw skill through an 8-layer static analysis
           pipeline before issuing a public trust verdict. No backdoors. No surprises.
         </p>
 
@@ -159,6 +159,7 @@ export default async function HomePage() {
             { id: '05', name: 'Dependency Scan', desc: '8 manifest formats' },
             { id: '06', name: 'Network Analysis', desc: 'Destination + exfil endpoints' },
             { id: '07', name: 'Exfil Detection', desc: 'Read-then-send patterns' },
+            { id: '08', name: 'Prompt Injection', desc: 'Instruction override + hijack' },
             { id: '  ', name: 'All parallel', desc: 'ThreadPoolExecutor' },
           ].map(({ id, name, desc }) => (
             <div key={id} style={{

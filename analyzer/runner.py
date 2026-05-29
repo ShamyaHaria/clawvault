@@ -10,6 +10,7 @@ from analyzer.detectors import (
     dependency_scanner,
     network_destination_analyzer,
     exfiltration_detector,
+    prompt_injection_detector,
 )
 
 DETECTORS = [
@@ -20,6 +21,7 @@ DETECTORS = [
     dependency_scanner,
     network_destination_analyzer,
     exfiltration_detector,
+    prompt_injection_detector,
 ]
 
 SEVERITY_WEIGHTS = {
