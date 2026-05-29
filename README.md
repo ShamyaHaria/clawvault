@@ -1,6 +1,6 @@
 # ClawVault
 
-**The trusted skill registry for OpenClaw.**
+**The Trusted Skill Registry for OpenClaw.**
 
 ClawVault is a security verification platform for the OpenClaw ecosystem. Every skill submitted is audited through a 7-layer static analysis pipeline before a public trust verdict is issued. Users know exactly what a skill does, what permissions it requests and whether it is safe to install.
 
