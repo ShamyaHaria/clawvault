@@ -121,8 +121,8 @@ export default async function HomePage() {
           {[
             { value: skills.length, label: 'skills audited', mono: true },
             { value: verified, label: 'verified safe', mono: true },
-            { value: '7', label: 'detector layers', mono: true },
-            { value: '243', label: 'security tests', mono: true },
+            { value: '8', label: 'detector layers', mono: true },
+            { value: '269', label: 'security tests', mono: true },
           ].map(({ value, label }) => (
             <div key={label}>
               <div style={{
