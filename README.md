@@ -44,12 +44,6 @@ ClawVault is designed for skill-sized submissions. The scanner is calibrated for
 
 ---
 
-## Repository Links
-
-Every submission declares a source repository. It is displayed on the public audit report so anyone can trace the skill back to its origin. Future versions will cross-reference submitted code against the declared repository and trigger re-audits automatically on new commits.
-
----
-
 ## License
 
 [Apache 2.0](./LICENSE)
